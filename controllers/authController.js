@@ -2,17 +2,14 @@ const bcrypt = require('bcrypt')
 const userModel = require('../models/signUp/signUp_model');
 const otpGenerator = require('otp-generator')
 let myOtp = null;
-
 const forgotPassword = async(req,res) => {
     console.log("forgot Password");
-    
     res.render('forgotPassword');
 }
 const forgotPasswordController = async (req, res) => {
     console.log("forgot Password Controller & id", req.params.id);
     const { email } = req.body;
     const user = await userModel.findOne({ email });
-
     if (user) {
         console.log("user found");
         let link = `http://localhost:3009/resetPass/${user.id}`
