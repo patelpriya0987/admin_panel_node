@@ -12,7 +12,8 @@ const signUpController = async (req , res) => {
             const data =  {
                 name: req.body.name,
                 email: req.body.email,
-                password: hashPassword
+                password: hashPassword,
+                userToken: null,
             }
 
             try{

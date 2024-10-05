@@ -2,6 +2,18 @@ const bcrypt = require('bcrypt')
 const userModel = require('../models/signUp/signUp_model');
 const otpGenerator = require('otp-generator')
 let myOtp = null;
+const TokenGenerator = ('token-generator')
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "priyupatel0987@gmail.com",
+      pass: "onfldmuqzxswsnmf",
+    },
+  });
 const forgotPassword = async(req,res) => {
     console.log("forgot Password");
     res.render('forgotPassword');
@@ -12,9 +24,25 @@ const forgotPasswordController = async (req, res) => {
     const user = await userModel.findOne({ email });
     if (user) {
         console.log("user found");
-        let link = `http://localhost:3009/resetPass/${user.id}`
-        console.log("RESET LINK >>>",link);
+        const token = TokenGenerator.generate;
+        console.log('token',token);
         
+        let link = `http://localhost:3009/resetPass/${user.id}`
+        var message = {
+            from: "priyupatel0987",
+            to: user.email,
+            subject: "RESET password",
+            text: `Hi ${user.name},We received a request to reset your password. Click the link below to reset it: ${link} If you didn’t request a password reset, please ignore this email. Thanks`,
+          };
+        console.log("RESET LINK >>>", message);
+        transporter.sendMail(message, (error, info) => {
+            if (error) {
+              console.error("Error sending email: ", error);
+            } else {
+              console.log("Email sent: ", info.response);
+            }
+          });
+
         res.redirect(`/forgotPassword`);
     } else {
         console.log("user not found");
